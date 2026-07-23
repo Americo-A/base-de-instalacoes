@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
+import { BrowserMultiFormatReader } from "@zxing/browser"
 
 import { buscarConfiguracaoPorId } from "@/lib/services/configuracoes"
 import { criarInstalacao } from "@/lib/services/instalacoes"
@@ -9,10 +10,14 @@ import { criarInstalacao } from "@/lib/services/instalacoes"
 import SectionTitle from "@/components/ui/SectionTitle"
 import InputField from "@/components/ui/InputField"
 import { buscarModelo } from "@/lib/services/modelos"
-
+import ImeiInput from "@/components/ui/ImeiInput"
+import CameraScanner from "@/components/ui/CameraScanner"
 
 export default function NovaInstalacao(){
 
+const [campoLeitura, setCampoLeitura] = useState<
+"imei" | "imei_antigo" | "imei_novo" | null
+>(null)
 
 const router = useRouter()
 
@@ -223,6 +228,11 @@ alert(
 
 }
 
+function abrirLeitor(
+  campo: "imei" | "imei_antigo" | "imei_novo"
+) {
+  setCampoLeitura(campo)
+}
 return (
 
 <main
@@ -508,20 +518,14 @@ v
 form.tipo_servico !== "Manutenção" && (
 
 
-<InputField
-
-label="IMEI"
-
-value={form.imei}
-
-onChange={(v)=>
-atualizar(
-"imei",
-v
-)}
-
+<ImeiInput
+  label="IMEI"
+  value={form.imei}
+  onChange={(v) =>
+    atualizar("imei", v)
+  }
+  onCamera={() => abrirLeitor("imei")}
 />
-
 
 )
 
@@ -538,35 +542,24 @@ form.tipo_servico === "Manutenção" && (
 <>
 
 
-<InputField
-
-label="IMEI antigo"
-
-value={form.imei_antigo}
-
-onChange={(v)=>
-atualizar(
-"imei_antigo",
-v
-)}
-
+<ImeiInput
+  label="IMEI antigo"
+  value={form.imei_antigo}
+  onChange={(v) =>
+    atualizar("imei_antigo", v)
+  }
+  onCamera={() => abrirLeitor("imei_antigo")}
 />
 
 
 
-
-<InputField
-
-label="IMEI novo"
-
-value={form.imei_novo}
-
-onChange={(v)=>
-atualizar(
-"imei_novo",
-v
-)}
-
+<ImeiInput
+  label="IMEI novo"
+  value={form.imei_novo}
+  onChange={(v) =>
+    atualizar("imei_novo", v)
+  }
+  onCamera={() => abrirLeitor("imei_novo")}
 />
 
 
@@ -574,7 +567,10 @@ v
 
 )
 
+
 }
+
+
 
 
 
@@ -818,6 +814,29 @@ Salvar instalação
 
 
 
+
+{campoLeitura && (
+
+<CameraScanner
+
+onClose={()=>
+setCampoLeitura(null)
+}
+
+onResult={(codigo) => {
+
+  atualizar(
+    campoLeitura,
+    codigo.replace(/\D/g, "")
+  )
+
+  setCampoLeitura(null)
+
+}}
+
+/>
+
+)}
 
 </main>
 
