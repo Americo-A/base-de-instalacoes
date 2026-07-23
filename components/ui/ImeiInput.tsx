@@ -41,25 +41,31 @@ export default function ImeiInput({
       <div className="flex gap-2">
 
         <input
-          type="text"
-          inputMode="numeric"
-          value={value}
-          onChange={(e) =>
-            onChange(
-              e.target.value.replace(/\D/g, "")
-            )
-          }
-          className="
-            flex-1
-            rounded-xl
-            border
-            border-gray-300
-            px-4
-            py-3
-            outline-none
-            focus:border-green-600
-          "
-        />
+  type="text"
+  inputMode="numeric"
+  value={value}
+  onChange={(e) =>
+    onChange(
+      e.target.value.replace(/\D/g, "")
+    )
+  }
+  className="
+    flex-1
+    rounded-xl
+    border
+    border-gray-300
+    bg-white
+    text-black
+    placeholder:text-gray-400
+    caret-black
+    px-4
+    py-3
+    outline-none
+    focus:border-green-600
+    focus:ring-2
+    focus:ring-green-200
+  "
+/>
 
         <button
           type="button"
